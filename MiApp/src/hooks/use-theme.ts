@@ -3,13 +3,20 @@
  * https://docs.expo.dev/guides/color-schemes/
  */
 
-import { Colors } from '@/constants/theme';
+import { Colors, Gradients } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 
-export function useTheme() {
+/** Devuelve el esquema activo, con default a 'light' (RN 0.81 puede dar null). */
+export function useScheme(): 'light' | 'dark' {
   const scheme = useColorScheme();
-  // En RN 0.81 useColorScheme devuelve 'light' | 'dark' | null; default a 'light'.
-  const theme = scheme === 'dark' ? 'dark' : 'light';
+  return scheme === 'dark' ? 'dark' : 'light';
+}
 
-  return Colors[theme];
+export function useTheme() {
+  return Colors[useScheme()];
+}
+
+/** Paleta de degradés del esquema activo (celeste/azul). */
+export function useGradients() {
+  return Gradients[useScheme()];
 }

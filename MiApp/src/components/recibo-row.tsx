@@ -1,6 +1,7 @@
 import { StyleSheet, View } from 'react-native';
 
 import { Card } from '@/components/card';
+import { IconBadge } from '@/components/icon-badge';
 import { IconButton } from '@/components/icon-button';
 import { ThemedText } from '@/components/themed-text';
 import { Spacing } from '@/constants/theme';
@@ -11,38 +12,42 @@ type ReciboRowProps = {
   onDescargar: (recibo: Recibo) => void;
 };
 
-/** Fila de la lista de recibos: período + botón circular de descarga. */
+/** Tarjeta de un recibo: ícono + período + botón de descarga. */
 export function ReciboRow({ recibo, onDescargar }: ReciboRowProps) {
   return (
-    <View style={styles.row}>
-      <Card style={styles.periodo}>
-        <ThemedText type="subtitle" style={styles.periodoText} numberOfLines={1}>
+    <Card style={styles.card}>
+      <IconBadge name="document-text-outline" size={48} />
+
+      <View style={styles.info}>
+        <ThemedText type="default" style={styles.periodo} numberOfLines={1}>
           {recibo.periodo}
         </ThemedText>
-      </Card>
+        <ThemedText type="small" themeColor="textSecondary">
+          Recibo de sueldo
+        </ThemedText>
+      </View>
+
       <IconButton
         accessibilityLabel={`Descargar recibo de ${recibo.periodo}`}
         onPress={() => onDescargar(recibo)}
       />
-    </View>
+    </Card>
   );
 }
 
 const styles = StyleSheet.create({
-  row: {
+  card: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: Spacing.three,
+    padding: Spacing.three,
+  },
+  info: {
+    flex: 1,
+    gap: Spacing.half,
   },
   periodo: {
-    flex: 1,
-    justifyContent: 'center',
-    minHeight: 64,
-  },
-  periodoText: {
-    fontSize: 20,
-    lineHeight: 28,
-    fontWeight: '600',
-    letterSpacing: 0.5,
+    fontWeight: '700',
+    fontSize: 17,
   },
 });

@@ -1,6 +1,6 @@
 import { StyleSheet, View, type ViewProps } from 'react-native';
 
-import { Radii, Spacing } from '@/constants/theme';
+import { Radii, Shadows, Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 
 type CardProps = ViewProps & {
@@ -32,6 +32,7 @@ const styles = StyleSheet.create({
   card: {
     borderRadius: Radii.lg,
     borderWidth: StyleSheet.hairlineWidth,
+    ...Shadows.sm,
   },
   padded: {
     padding: Spacing.three,

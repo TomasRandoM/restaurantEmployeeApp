@@ -1,6 +1,8 @@
+import Ionicons from '@expo/vector-icons/Ionicons';
 import { StyleSheet, View } from 'react-native';
 
 import { Card } from '@/components/card';
+import { Hero } from '@/components/hero';
 import { PrimaryButton } from '@/components/primary-button';
 import { ScreenContainer } from '@/components/screen-container';
 import { ThemedText } from '@/components/themed-text';
@@ -19,28 +21,43 @@ export function QrView({ qr, generando, onGenerar }: QrViewProps) {
   const theme = useTheme();
 
   return (
-    <ScreenContainer center gap={Spacing.four}>
-      <View style={styles.header}>
-        <ThemedText type="title">Tu código QR</ThemedText>
-        <ThemedText type="default" themeColor="textSecondary" style={styles.subtitle}>
-          Mostralo en el local para registrar tu ingreso.
+    <ScreenContainer gap={Spacing.four}>
+      <Hero center>
+        <Ionicons name="qr-code-outline" size={32} color="#FFFFFF" />
+        <ThemedText type="subtitle" style={styles.heroTitle}>
+          Tu código QR
         </ThemedText>
-      </View>
+        <ThemedText type="default" style={styles.heroSubtitle}>
+          Mostralo en el local para registrar tu ingreso
+        </ThemedText>
+      </Hero>
 
-      <Card style={styles.qrCard}>
-        {/* TODO: reemplazar este placeholder por un QR real (p.ej. react-native-qrcode-svg). */}
-        <View style={[styles.qrPlaceholder, { borderColor: theme.border }]}>
-          <ThemedText type="subtitle" themeColor="textSecondary">
-            {qr ? 'QR' : '—'}
-          </ThemedText>
-        </View>
-        <ThemedText type="small" themeColor="textSecondary">
-          {qr ? qr.valor : 'Todavía no generaste un código.'}
-        </ThemedText>
-      </Card>
+      <View style={styles.center}>
+        <Card style={styles.qrCard}>
+          {/* TODO: reemplazar este placeholder por un QR real (p.ej. react-native-qrcode-svg). */}
+          <View style={[styles.qrPlaceholder, { backgroundColor: theme.backgroundElement }]}>
+            <Ionicons
+              name={qr ? 'qr-code' : 'qr-code-outline'}
+              size={120}
+              color={qr ? theme.text : theme.textSecondary}
+            />
+          </View>
+          <View style={styles.qrMeta}>
+            <Ionicons
+              name={qr ? 'checkmark-circle' : 'time-outline'}
+              size={16}
+              color={qr ? theme.success : theme.textSecondary}
+            />
+            <ThemedText type="small" themeColor="textSecondary">
+              {qr ? qr.valor : 'Todavía no generaste un código.'}
+            </ThemedText>
+          </View>
+        </Card>
+      </View>
 
       <PrimaryButton
         label={qr ? 'Regenerar código' : 'Generar código QR'}
+        iconName="refresh"
         onPress={onGenerar}
         loading={generando}
       />
@@ -49,12 +66,16 @@ export function QrView({ qr, generando, onGenerar }: QrViewProps) {
 }
 
 const styles = StyleSheet.create({
-  header: {
-    alignItems: 'center',
-    gap: Spacing.one,
-  },
-  subtitle: {
+  heroTitle: {
+    color: '#FFFFFF',
     textAlign: 'center',
+  },
+  heroSubtitle: {
+    color: 'rgba(255,255,255,0.9)',
+    textAlign: 'center',
+  },
+  center: {
+    alignItems: 'center',
   },
   qrCard: {
     alignItems: 'center',
@@ -62,12 +83,15 @@ const styles = StyleSheet.create({
     padding: Spacing.four,
   },
   qrPlaceholder: {
-    width: 220,
-    height: 220,
-    borderRadius: Radii.md,
-    borderWidth: 1,
-    borderStyle: 'dashed',
+    width: 240,
+    height: 240,
+    borderRadius: Radii.lg,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  qrMeta: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.one,
   },
 });

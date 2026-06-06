@@ -58,6 +58,45 @@ export const Colors = {
 
 export type ThemeColor = keyof typeof Colors.light & keyof typeof Colors.dark;
 
+/**
+ * Degradés celeste→azul de marca. Se usan en headers (hero) y botones primarios
+ * para darle un look más vistoso sin perder la coherencia con `Colors`.
+ */
+export const Gradients = {
+  light: {
+    primary: ['#4DA3FF', '#2E6BF0'] as const,
+    hero: ['#5BA8FF', '#2E6BF0'] as const,
+  },
+  dark: {
+    primary: ['#3C7DF7', '#5B9CFF'] as const,
+    hero: ['#1F3F73', '#2E6BF0'] as const,
+  },
+} as const;
+
+export type GradientName = keyof typeof Gradients.light & keyof typeof Gradients.dark;
+
+/** Sombras suaves reutilizables (cross-platform). */
+export const Shadows = {
+  sm: Platform.select({
+    ios: { shadowColor: '#0B1220', shadowOpacity: 0.08, shadowRadius: 8, shadowOffset: { width: 0, height: 3 } },
+    android: { elevation: 2 },
+    web: { boxShadow: '0 3px 10px rgba(11,18,32,0.08)' },
+    default: {},
+  }),
+  md: Platform.select({
+    ios: { shadowColor: '#0B1220', shadowOpacity: 0.1, shadowRadius: 16, shadowOffset: { width: 0, height: 8 } },
+    android: { elevation: 4 },
+    web: { boxShadow: '0 8px 22px rgba(11,18,32,0.1)' },
+    default: {},
+  }),
+  primary: Platform.select({
+    ios: { shadowColor: '#2E6BF0', shadowOpacity: 0.35, shadowRadius: 14, shadowOffset: { width: 0, height: 8 } },
+    android: { elevation: 6 },
+    web: { boxShadow: '0 8px 20px rgba(46,107,240,0.35)' },
+    default: {},
+  }),
+} as const;
+
 export const Fonts = Platform.select({
   ios: {
     /** iOS `UIFontDescriptorSystemDesignDefault` */

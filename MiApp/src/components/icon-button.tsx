@@ -1,22 +1,23 @@
-import { Pressable, StyleSheet, Text, type GestureResponderEvent } from 'react-native';
+import Ionicons from '@expo/vector-icons/Ionicons';
+import { type ComponentProps } from 'react';
+import { Pressable, StyleSheet, type GestureResponderEvent } from 'react-native';
 
 import { Radii } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 
+type IoniconName = ComponentProps<typeof Ionicons>['name'];
+
 type IconButtonProps = {
-  /**
-   * Glifo a mostrar. Por defecto una flecha de descarga (↓).
-   * TODO: si quieren, reemplazar por un ícono real (@expo/vector-icons / expo-symbols).
-   */
-  glyph?: string;
+  /** Ícono a mostrar. Por defecto una descarga. */
+  iconName?: IoniconName;
   onPress?: (event: GestureResponderEvent) => void;
   accessibilityLabel?: string;
   size?: number;
 };
 
-/** Botón circular con un glifo. Usado para el botón de descarga de recibos. */
+/** Botón circular con un ícono. Usado para descargar recibos. */
 export function IconButton({
-  glyph = '↓',
+  iconName = 'download-outline',
   onPress,
   accessibilityLabel,
   size = 48,
@@ -33,12 +34,11 @@ export function IconButton({
         {
           width: size,
           height: size,
-          backgroundColor: theme.primarySoft,
-          borderColor: theme.border,
+          backgroundColor: theme.primary,
         },
         pressed && styles.pressed,
       ]}>
-      <Text style={[styles.glyph, { color: theme.primary }]}>{glyph}</Text>
+      <Ionicons name={iconName} size={Math.round(size * 0.46)} color={theme.onPrimary} />
     </Pressable>
   );
 }
@@ -46,16 +46,11 @@ export function IconButton({
 const styles = StyleSheet.create({
   button: {
     borderRadius: Radii.pill,
-    borderWidth: StyleSheet.hairlineWidth,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  glyph: {
-    fontSize: 22,
-    fontWeight: '700',
-    lineHeight: 26,
-  },
   pressed: {
-    opacity: 0.7,
+    opacity: 0.8,
+    transform: [{ scale: 0.95 }],
   },
 });
