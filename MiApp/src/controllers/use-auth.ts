@@ -1,14 +1,14 @@
 /**
  * Controller de autenticación (capa "Controlador" del MVC).
  *
- * ⚠️ TEMPLATE: la lógica real la implementan ustedes.
- * Acá solo está la FIRMA que consume la LoginView. El estado/validación,
- * la llamada a la API, el guardado de sesión, etc. quedan como TODO.
+ * ⚠️ TEMPLATE: maneja el ESTADO de UI (campos, cargando, error) y orquesta
+ * el flujo. El acceso a datos real vive en `authService` (capa Servicios).
+ * Acá no debería haber `fetch` ni almacenamiento: solo llamadas al service.
  */
 
 import { useState } from 'react';
 
-import type { Credenciales } from '@/models/types';
+import { authService } from '@/services';
 
 export interface UseAuthResult {
   email: string;
@@ -19,21 +19,30 @@ export interface UseAuthResult {
   cargando: boolean;
   /** Mensaje de error a mostrar en la UI, si lo hubiera. */
   error: string | null;
-  /** Dispara el login. Hoy no hace nada: implementar. */
+  /** Dispara el login (delega en authService). */
   enviar: () => void;
 }
 
 export function useAuth(): UseAuthResult {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [cargando] = useState(false);
-  const [error] = useState<string | null>(null);
+  const [cargando, setCargando] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  function enviar() {
-    const credenciales: Credenciales = { email, password };
-    // TODO: validar credenciales, llamar a la API, guardar sesión y
-    // navegar al área autenticada (router.replace('/(tabs)')).
-    console.log('TODO: implementar login', credenciales);
+  async function enviar() {
+    setError(null);
+    setCargando(true);
+    try {
+      const empleado = await authService.login({ email, password });
+      await authService.guardarSesion(empleado);
+      // TODO: navegar al área autenticada (p. ej. exponiendo un callback
+      // onLoginOk o un flag de éxito que la screen observe).
+    } catch {
+      // TODO: distinguir el tipo de error (credenciales / red) para el mensaje.
+      setError('No se pudo iniciar sesión. Revisá tus datos.');
+    } finally {
+      setCargando(false);
+    }
   }
 
   return { email, password, setEmail, setPassword, cargando, error, enviar };

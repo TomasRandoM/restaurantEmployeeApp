@@ -1,13 +1,14 @@
 /**
  * Controller para subir una justificación de inasistencia.
  *
- * ⚠️ TEMPLATE: maneja solo el estado mínimo que la view necesita mostrar.
- * El date picker, la selección de archivo y la subida quedan como TODO.
+ * ⚠️ TEMPLATE: maneja el estado de UI y los selectores (fecha/archivo, que
+ * son APIs del dispositivo y por eso viven en el controller). El envío a la
+ * API se delega en `justificacionesService`.
  */
 
 import { useState } from 'react';
 
-import type { Justificacion } from '@/models/types';
+import { justificacionesService } from '@/services';
 
 export interface UseJustificacionResult {
   /** Fecha seleccionada (ISO yyyy-mm-dd) o null si todavía no se eligió. */
@@ -20,33 +21,47 @@ export interface UseJustificacionResult {
   seleccionarFecha: () => void;
   /** Abre el selector de archivo. Hoy no hace nada: implementar. */
   seleccionarArchivo: () => void;
-  /** Envía la justificación. Hoy no hace nada: implementar. */
+  /** Envía la justificación (delega en justificacionesService). */
   enviar: () => void;
 }
 
 export function useJustificacion(): UseJustificacionResult {
-  const [fecha] = useState<string | null>(null);
-  const [archivoNombre] = useState<string | null>(null);
-  const [enviando] = useState(false);
-  const [error] = useState<string | null>(null);
+  const [fecha, setFecha] = useState<string | null>(null);
+  const [archivoUri, setArchivoUri] = useState<string | null>(null);
+  const [archivoNombre, setArchivoNombre] = useState<string | null>(null);
+  const [enviando, setEnviando] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   function seleccionarFecha() {
-    // TODO: abrir un date picker y guardar la fecha elegida.
+    // TODO: abrir un date picker y guardar la fecha elegida con setFecha(...).
     console.log('TODO: seleccionar fecha');
   }
 
   function seleccionarArchivo() {
-    // TODO: abrir expo-document-picker / image-picker y guardar el archivo.
+    // TODO: abrir expo-document-picker / image-picker y guardar el resultado
+    // con setArchivoUri(...) y setArchivoNombre(...).
     console.log('TODO: seleccionar archivo');
   }
 
-  function enviar() {
-    const justificacion: Partial<Justificacion> = {
-      fecha: fecha ?? undefined,
-      archivoNombre: archivoNombre ?? undefined,
-    };
-    // TODO: subir la justificación a la API.
-    console.log('TODO: enviar justificación', justificacion);
+  async function enviar() {
+    if (!fecha) {
+      setError('Elegí una fecha.');
+      return;
+    }
+    setError(null);
+    setEnviando(true);
+    try {
+      await justificacionesService.enviar({
+        fecha,
+        archivoUri: archivoUri ?? undefined,
+        archivoNombre: archivoNombre ?? undefined,
+      });
+      // TODO: mostrar feedback de éxito y/o volver atrás.
+    } catch {
+      setError('No se pudo enviar la justificación.');
+    } finally {
+      setEnviando(false);
+    }
   }
 
   return {

@@ -1,31 +1,38 @@
 /**
  * Controller para generar el código QR del empleado.
  *
- * ⚠️ TEMPLATE: no genera nada real todavía.
- * La generación del valor del QR y su refresco quedan como TODO.
+ * ⚠️ TEMPLATE: maneja el estado de UI y delega la generación del valor del
+ * QR en `qrService`. La obtención del token real va en el service.
  */
 
 import { useState } from 'react';
 
 import type { QrData } from '@/models/types';
+import { qrService } from '@/services';
 
 export interface UseQrCodeResult {
   qr: QrData | null;
   generando: boolean;
   error: string | null;
-  /** (Re)genera el código QR. Hoy no hace nada: implementar. */
+  /** (Re)genera el código QR (delega en qrService). */
   generar: () => void;
 }
 
 export function useQrCode(): UseQrCodeResult {
-  const [qr] = useState<QrData | null>(null);
-  const [generando] = useState(false);
-  const [error] = useState<string | null>(null);
+  const [qr, setQr] = useState<QrData | null>(null);
+  const [generando, setGenerando] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  function generar() {
-    // TODO: generar el valor del QR (token del empleado) y, si aplica,
-    // renderizarlo con una librería de QR. Acá solo se expone la firma.
-    console.log('TODO: generar código QR');
+  async function generar() {
+    setError(null);
+    setGenerando(true);
+    try {
+      setQr(await qrService.generar());
+    } catch {
+      setError('No se pudo generar el código QR.');
+    } finally {
+      setGenerando(false);
+    }
   }
 
   return { qr, generando, error, generar };
