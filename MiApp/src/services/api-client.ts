@@ -10,9 +10,11 @@
  * el controller deberían saber que existe `fetch`.
  */
 
-// TODO: reemplazar por la URL real de su API.
-// Recomendado leerla de una variable de entorno (app.config / expo-constants).
-export const API_BASE_URL = 'https://api.tu-restaurante.example';
+// Lee la URL de la API desde el .env. En Expo SDK 54 las variables expuestas
+// al cliente DEBEN tener el prefijo EXPO_PUBLIC_ y accederse con dot notation
+// (no bracket notation ni destructuring). Quedan embebidas en build time, así
+// que NO son secretas: nunca metas tokens/keys acá.
+export const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL;
 
 /** Error normalizado que los services pueden propagar a los controllers. */
 export class ApiError extends Error {
