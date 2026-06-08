@@ -6,6 +6,7 @@
  * Acá no debería haber `fetch` ni almacenamiento: solo llamadas al service.
  */
 
+import { router } from 'expo-router';
 import { useState } from 'react';
 
 import { authService } from '@/services';
@@ -21,6 +22,7 @@ export interface UseAuthResult {
   error: string | null;
   /** Dispara el login (delega en authService). */
   enviar: () => void;
+  checkSession: () => void;
 }
 
 export function useAuth(): UseAuthResult {
@@ -34,16 +36,23 @@ export function useAuth(): UseAuthResult {
     setCargando(true);
     try {
       const empleado = await authService.login({ email, password });
-      await authService.guardarSesion(empleado);
-      // TODO: navegar al área autenticada (p. ej. exponiendo un callback
-      // onLoginOk o un flag de éxito que la screen observe).
+      router.replace('/home');
     } catch {
-      // TODO: distinguir el tipo de error (credenciales / red) para el mensaje.
       setError('No se pudo iniciar sesión. Revisá tus datos.');
     } finally {
       setCargando(false);
     }
   }
 
-  return { email, password, setEmail, setPassword, cargando, error, enviar };
+  async function checkSession() {
+    try {
+      const empleado = await authService.obtenerSesion();
+      if (empleado !== null) {
+        router.replace('/home');
+      }
+    } catch {
+    }
+  }
+
+  return { email, password, setEmail, setPassword, cargando, error, enviar, checkSession};
 }

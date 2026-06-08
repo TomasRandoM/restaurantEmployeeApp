@@ -9,6 +9,7 @@ import { TextField } from '@/components/text-field';
 import { ThemedText } from '@/components/themed-text';
 import { Radii, Shadows, Spacing } from '@/constants/theme';
 import { useGradients } from '@/hooks/use-theme';
+import { useEffect } from 'react';
 
 export type LoginViewProps = {
   email: string;
@@ -16,6 +17,7 @@ export type LoginViewProps = {
   onChangeEmail: (value: string) => void;
   onChangePassword: (value: string) => void;
   onSubmit: () => void;
+  checkSession: () => void;
   loading?: boolean;
   error?: string | null;
 };
@@ -27,11 +29,16 @@ export function LoginView({
   onChangeEmail,
   onChangePassword,
   onSubmit,
+  checkSession,
   loading,
   error,
 }: LoginViewProps) {
   const gradients = useGradients();
 
+  useEffect(() => {
+    checkSession();
+  }, []);
+  
   return (
     <ScreenContainer center gap={Spacing.four}>
       <View style={styles.header}>

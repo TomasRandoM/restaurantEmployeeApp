@@ -9,7 +9,7 @@
  * vienen los datos (API, almacenamiento, file system...). Ni la view ni
  * el controller deberían saber que existe `fetch`.
  */
-
+import { authService } from "./auth-service";
 // Lee la URL de la API desde el .env. En Expo SDK 54 las variables expuestas
 // al cliente DEBEN tener el prefijo EXPO_PUBLIC_ y accederse con dot notation
 // (no bracket notation ni destructuring). Quedan embebidas en build time, así
@@ -24,7 +24,7 @@ export class ApiError extends Error {
     public readonly status?: number,
   ) {
     super(message);
-    this.name = 'ApiError';
+    this.name = "ApiError";
   }
 }
 
@@ -37,21 +37,25 @@ export class ApiError extends Error {
  * TODO (ustedes): agregar el header Authorization con el token de sesión,
  * timeout, reintentos, etc. según necesiten.
  */
-export async function apiRequest<T>(path: string, options?: RequestInit): Promise<T> {
-  // TODO: implementar la llamada real. Esqueleto de referencia:
-  //
-  // const res = await fetch(`${API_BASE_URL}${path}`, {
-  //   ...options,
-  //   headers: {
-  //     'Content-Type': 'application/json',
-  //     // Authorization: `Bearer ${await authService.obtenerToken()}`,
-  //     ...options?.headers,
-  //   },
-  // });
-  // if (!res.ok) {
-  //   throw new ApiError(`Error ${res.status} en ${path}`, res.status);
-  // }
-  // return (await res.json()) as T;
-
-  throw new ApiError(`TODO: implementar apiRequest para ${path}`);
+export async function apiRequest<T>(
+  path: string,
+  options?: RequestInit,
+): Promise<T> {
+  let res: Response
+  try {
+    res = await fetch(`${API_BASE_URL}${path}`, {
+      ...options,
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${await authService.obtenerToken()}`,
+        ...options?.headers,
+      },
+    });
+  } catch {
+    throw new ApiError("No hay conexión a internet", 0);
+  }
+  if (!res.ok) {
+    throw new ApiError(`Error ${res.status} en ${path}`, res.status);
+  }
+  return (await res.json()) as T;
 }

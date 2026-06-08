@@ -6,39 +6,79 @@
  * como TODO. El controller `use-auth` solo llama a estas funciones.
  */
 
-import { empleadoMock } from '@/models/mock';
-import type { Credenciales, Empleado } from '@/models/types';
+import type { AuthToken, Credenciales, Empleado } from "@/models/types";
+import * as SecureStore from "expo-secure-store";
+import { ApiError, apiRequest } from "./api-client";
+import { qrService } from "./qr-service";
 
 export const authService = {
-  /**
-   * Autentica al usuario y devuelve el empleado logueado.
-   * Lanza un error (idealmente ApiError) si las credenciales son inválidas.
-   */
   async login(credenciales: Credenciales): Promise<Empleado> {
-    // TODO: validar y llamar a la API. Ejemplo de referencia:
-    // return apiRequest<Empleado>('/auth/login', {
-    //   method: 'POST',
-    //   body: JSON.stringify(credenciales),
-    // });
-    console.log('TODO: login real', credenciales);
-    return empleadoMock; // placeholder para que el template funcione
+    try {
+      const token = await apiRequest<AuthToken>("/login", {
+        method: "POST",
+        body: JSON.stringify(credenciales),
+      });
+      await SecureStore.setItemAsync("EMPLEADO_TOKEN", token.accessToken);
+
+      const empleado = await apiRequest<Empleado>(
+        `/api/v1/empleado/email/${credenciales.email}`,
+        { method: "GET" },
+      );
+      await SecureStore.setItemAsync("EMPLEADO_NAME", empleado.nombre);
+      await SecureStore.setItemAsync("EMPLEADO_ID", empleado.id);
+      await SecureStore.setItemAsync("EMPLEADO_EMAIL", credenciales.email);
+      await qrService.updateQRKey(empleado.id);
+      return empleado;
+    } catch (error) {
+      if (error instanceof ApiError) {
+        if (error.status === 401) {
+          throw new ApiError("Usuario o contraseña incorrectos", 401);
+        }
+        throw error;
+      }
+      throw new ApiError("No se pudo conectar con el servidor");
+    }
   },
 
-  /** Persiste la sesión (token / empleado) en el dispositivo. */
-  async guardarSesion(empleado: Empleado): Promise<void> {
-    // TODO: guardar con expo-secure-store / AsyncStorage.
-    console.log('TODO: guardar sesión', empleado.id);
+  async obtenerToken(): Promise<string | null> {
+    return SecureStore.getItemAsync("EMPLEADO_TOKEN");
   },
 
-  /** Recupera la sesión guardada, o null si no hay nadie logueado. */
+  async obtenerEmpleadoId(): Promise<string | null> {
+    return SecureStore.getItemAsync("EMPLEADO_ID");
+  },
+
   async obtenerSesion(): Promise<Empleado | null> {
-    // TODO: leer la sesión persistida y validarla.
-    return null;
+    const res = await SecureStore.getItemAsync("EMPLEADO_TOKEN");
+    if (res != null) {
+      const empleadoId = await SecureStore.getItemAsync("EMPLEADO_ID");
+      if (empleadoId != null) {
+        try {
+          await qrService.updateQRKey(empleadoId);
+          const name = await SecureStore.getItemAsync("EMPLEADO_NAME");
+          const id = await SecureStore.getItemAsync("EMPLEADO_ID");
+          if (id !== null && name !== null) {
+            const empleado: Empleado = { id, nombre: name };
+            return empleado;
+          }
+        } catch (error) {
+          if (error instanceof ApiError && error.status === 403) {
+            await this.logout();
+            return null;
+          }
+        }
+      }
+      return null;
+    } else {
+      return null;
+    }
   },
 
   /** Cierra la sesión y limpia el almacenamiento. */
   async logout(): Promise<void> {
-    // TODO: limpiar el token guardado y, si aplica, avisar a la API.
-    console.log('TODO: logout');
+    await SecureStore.deleteItemAsync("EMPLEADO_NAME");
+    await SecureStore.deleteItemAsync("EMPLEADO_TOKEN");
+    await SecureStore.deleteItemAsync("EMPLEADO_EMAIL");
+    await SecureStore.deleteItemAsync("EMPLEADO_ID");
   },
 };

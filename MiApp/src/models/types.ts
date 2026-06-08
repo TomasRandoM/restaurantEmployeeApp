@@ -15,8 +15,6 @@ export interface Credenciales {
 export interface Empleado {
   id: string;
   nombre: string;
-  email: string;
-  puesto: string;
 }
 
 /** Un recibo de sueldo de un mes determinado. */
@@ -44,6 +42,12 @@ export interface Justificacion {
 export interface QrData {
   /** Contenido que se codifica en el QR. */
   valor: string;
-  /** Momento de generación (ISO), por si el QR expira. */
-  generadoEn: string;
+}
+
+export interface AuthToken {
+  accessToken: string;
+}
+
+export interface QRKey {
+  qrKey: string
 }

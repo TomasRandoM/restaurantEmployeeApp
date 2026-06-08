@@ -1,5 +1,3 @@
-import { router } from 'expo-router';
-
 import { useAuth } from '@/controllers/use-auth';
 import { LoginView } from '@/views/login-view';
 
@@ -10,12 +8,10 @@ import { LoginView } from '@/views/login-view';
  * autenticada. Acá dejamos la navegación de ejemplo para el template.
  */
 export default function LoginScreen() {
-  const { email, password, setEmail, setPassword, cargando, error, enviar } = useAuth();
+  const { email, password, setEmail, setPassword, cargando, error, enviar, checkSession } = useAuth();
 
   function onSubmit() {
     enviar();
-    // TODO: navegar solo si el login fue exitoso. En el template entramos directo.
-    router.replace('/home');
   }
 
   return (
@@ -25,6 +21,7 @@ export default function LoginScreen() {
       onChangeEmail={setEmail}
       onChangePassword={setPassword}
       onSubmit={onSubmit}
+      checkSession={checkSession}
       loading={cargando}
       error={error}
     />
