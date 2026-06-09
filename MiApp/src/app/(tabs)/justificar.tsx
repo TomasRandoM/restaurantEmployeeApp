@@ -6,10 +6,17 @@ export default function JustificarScreen() {
   const {
     fecha,
     archivoNombre,
+    tipo,
+    observacion,
+    mostrarPickerFecha,
+    valorFecha,
     enviando,
     error,
     seleccionarFecha,
+    onCambiarFecha,
     seleccionarArchivo,
+    cambiarTipo,
+    cambiarObservacion,
     enviar,
   } = useJustificacion();
 
@@ -17,8 +24,15 @@ export default function JustificarScreen() {
     <JustificarView
       fecha={fecha}
       archivoNombre={archivoNombre}
+      tipo={tipo}
+      observacion={observacion}
+      mostrarPickerFecha={mostrarPickerFecha}
+      valorFecha={valorFecha}
       onSeleccionarFecha={seleccionarFecha}
+      onCambiarFecha={onCambiarFecha}
       onSeleccionarArchivo={seleccionarArchivo}
+      onCambiarTipo={cambiarTipo}
+      onCambiarObservacion={cambiarObservacion}
       onEnviar={enviar}
       enviando={enviando}
       error={error}

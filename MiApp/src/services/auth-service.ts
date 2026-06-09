@@ -17,6 +17,7 @@ export const authService = {
       const token = await apiRequest<AuthToken>("/login", {
         method: "POST",
         body: JSON.stringify(credenciales),
+        headers: { "Content-Type": "application/json" },
       });
       await SecureStore.setItemAsync("EMPLEADO_TOKEN", token.accessToken);
 

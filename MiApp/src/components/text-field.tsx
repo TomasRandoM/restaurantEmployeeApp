@@ -16,7 +16,7 @@ type TextFieldProps = TextInputProps & {
 };
 
 /** Input de texto con estética temática (light/dark), ícono y foco resaltado. */
-export function TextField({ label, iconName, style, ...rest }: TextFieldProps) {
+export function TextField({ label, iconName, style, multiline, ...rest }: TextFieldProps) {
   const theme = useTheme();
   const [focused, setFocused] = useState(false);
 
@@ -34,6 +34,7 @@ export function TextField({ label, iconName, style, ...rest }: TextFieldProps) {
             backgroundColor: theme.backgroundElement,
             borderColor: focused ? theme.primary : theme.border,
             borderWidth: focused ? 2 : 1,
+            alignItems: multiline ? 'flex-start' : 'center',
           },
         ]}>
         {iconName ? (
@@ -41,9 +42,11 @@ export function TextField({ label, iconName, style, ...rest }: TextFieldProps) {
             name={iconName}
             size={20}
             color={focused ? theme.primary : theme.textSecondary}
+            style={multiline ? { paddingTop: 2 } : undefined}
           />
         ) : null}
         <TextInput
+          multiline={multiline}
           placeholderTextColor={theme.textSecondary}
           onFocus={() => setFocused(true)}
           onBlur={() => setFocused(false)}

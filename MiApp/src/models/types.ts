@@ -29,6 +29,9 @@ export interface Recibo {
   archivoUrl?: string;
 }
 
+/** Tipo de comprobante adjunto a una justificación. */
+export type TipoJustificacion = 'CERTIFICADO' | 'OTRO';
+
 /** Justificación de inasistencia que el empleado sube. */
 export interface Justificacion {
   id: string;

@@ -46,12 +46,12 @@ export async function apiRequest<T>(
     res = await fetch(`${API_BASE_URL}${path}`, {
       ...options,
       headers: {
-        "Content-Type": "application/json",
         Authorization: `Bearer ${await authService.obtenerToken()}`,
         ...options?.headers,
       },
     });
-  } catch {
+  } catch (e) {
+    console.error('[apiRequest] fetch threw:', e);
     throw new ApiError("No hay conexión a internet", 0);
   }
   if (!res.ok) {

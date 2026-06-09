@@ -6,26 +6,48 @@
  */
 
 import type { Justificacion } from '@/models/types';
+import { apiRequest } from './api-client';
+import { authService } from './auth-service';
 
 /** Datos que el controller junta antes de enviar (aún sin id del backend). */
 export interface NuevaJustificacion {
   /** Fecha de la inasistencia (ISO yyyy-mm-dd). */
   fecha: string;
+  observacion?: string;
+  tipoDocumentacion: string;
   /** URI local del archivo elegido por el usuario, si adjuntó uno. */
   archivoUri?: string;
   /** Nombre del archivo elegido, para mostrar y enviar. */
   archivoNombre?: string;
+  /** MIME type del archivo (requerido por Android/OkHttp para armar el part). */
+  archivoTipo?: string;
+}
+
+function inferirMime(nombre?: string, uri?: string): string {
+  const ref = (nombre ?? uri ?? '').toLowerCase();
+  if (ref.endsWith('.pdf')) return 'application/pdf';
+  if (ref.endsWith('.png')) return 'image/png';
+  if (ref.endsWith('.jpg') || ref.endsWith('.jpeg')) return 'image/jpeg';
+  if (ref.endsWith('.webp')) return 'image/webp';
+  if (ref.endsWith('.heic')) return 'image/heic';
+  return 'application/octet-stream';
 }
 
 export const justificacionesService = {
-  /** Sube la justificación (con su adjunto) y devuelve la creada. */
-  async enviar(input: NuevaJustificacion): Promise<Justificacion> {
-    // TODO: armar un FormData con el archivo y subirlo:
-    // const form = new FormData();
-    // form.append('fecha', input.fecha);
-    // if (input.archivoUri) form.append('archivo', { uri: input.archivoUri, name: input.archivoNombre } as any);
-    // return apiRequest<Justificacion>('/justificaciones', { method: 'POST', body: form });
-    console.log('TODO: enviar justificación', input);
-    return { id: 'temp', fecha: input.fecha, archivoNombre: input.archivoNombre };
+  async enviar(input: NuevaJustificacion): Promise<void> {
+    const form = new FormData();
+    form.append("fecha", input.fecha);
+    if (input.archivoUri) {
+      form.append("archivo", {
+        uri: input.archivoUri,
+        name: input.archivoNombre ?? 'archivo',
+        type: input.archivoTipo ?? inferirMime(input.archivoNombre, input.archivoUri),
+      } as any);
+    }
+    const employeeId = await authService.obtenerEmpleadoId();
+    if (employeeId !== null) form.append("employeeId", employeeId);
+    if (input.observacion != null) form.append("observacion", input.observacion);
+    form.append("tipoDocumentacion", input.tipoDocumentacion);
+    await apiRequest<Justificacion>('/api/v1/justificacion/crearUsuario', { method: "POST", body: form });
   },
 };
