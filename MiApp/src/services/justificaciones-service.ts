@@ -33,10 +33,15 @@ function inferirMime(nombre?: string, uri?: string): string {
   return 'application/octet-stream';
 }
 
+function reordenarFecha(fecha: string): string {
+  const [dia, mes, año] = fecha.split('/');
+  return `${mes}/${dia}/${año}`;
+}
+
 export const justificacionesService = {
   async enviar(input: NuevaJustificacion): Promise<void> {
     const form = new FormData();
-    form.append("fecha", input.fecha);
+    form.append("fecha", reordenarFecha(input.fecha));
     if (input.archivoUri) {
       form.append("archivo", {
         uri: input.archivoUri,

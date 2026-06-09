@@ -26,6 +26,7 @@ export interface UseJustificacionResult {
   valorFecha: Date;
   enviando: boolean;
   error: string | null;
+  exito: string | null;
   /** Abre el selector de fecha. */
   seleccionarFecha: () => void;
   /** Handler del onChange del DateTimePicker. */
@@ -57,6 +58,7 @@ export function useJustificacion(): UseJustificacionResult {
   const [observacion, setObservacion] = useState('');
   const [enviando, setEnviando] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [exito, setExito] = useState<string | null>(null);
 
   function seleccionarFecha() {
     setMostrarPickerFecha(true);
@@ -104,9 +106,8 @@ export function useJustificacion(): UseJustificacionResult {
         archivoNombre: archivoNombre ?? undefined,
         archivoTipo: archivoTipo ?? undefined,
       });
-      // TODO: mostrar feedback de éxito y/o volver atrás.
+      setExito("Su justificación fue enviada.")
     } catch (e) {
-      console.error('[enviar justificacion]', e);
       setError('No se pudo enviar la justificación.');
     } finally {
       setEnviando(false);
@@ -122,6 +123,7 @@ export function useJustificacion(): UseJustificacionResult {
     valorFecha,
     enviando,
     error,
+    exito,
     seleccionarFecha,
     onCambiarFecha,
     seleccionarArchivo,

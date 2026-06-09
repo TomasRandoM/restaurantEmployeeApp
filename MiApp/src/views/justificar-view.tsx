@@ -31,6 +31,7 @@ export type JustificarViewProps = {
   onEnviar: () => void;
   enviando?: boolean;
   error?: string | null;
+  exito?: string | null
 };
 
 type SelectorCardProps = {
@@ -39,10 +40,11 @@ type SelectorCardProps = {
   value: string | null;
   placeholder: string;
   onPress: () => void;
+  required?: boolean;
 };
 
 /** Selector presionable que cambia de estilo cuando ya hay un valor cargado. */
-function SelectorCard({ iconName, label, value, placeholder, onPress }: SelectorCardProps) {
+function SelectorCard({ iconName, label, value, placeholder, onPress, required }: SelectorCardProps) {
   const theme = useTheme();
   const done = Boolean(value);
 
@@ -65,9 +67,16 @@ function SelectorCard({ iconName, label, value, placeholder, onPress }: Selector
         background={done ? theme.successSoft : theme.primarySoft}
       />
       <View style={styles.selectorTexts}>
-        <ThemedText type="smallBold" themeColor="textSecondary">
-          {label}
-        </ThemedText>
+        <View style={styles.selectorLabel}>
+          <ThemedText type="smallBold" themeColor="textSecondary">
+            {label}
+          </ThemedText>
+          {required && !done ? (
+            <ThemedText type="smallBold" style={{ color: theme.danger }}>
+              {' *'}
+            </ThemedText>
+          ) : null}
+        </View>
         <ThemedText type="default" style={styles.selectorValue} numberOfLines={1}>
           {value ?? placeholder}
         </ThemedText>
@@ -141,9 +150,11 @@ export function JustificarView({
   onEnviar,
   enviando,
   error,
+  exito,
 }: JustificarViewProps) {
   const listo = Boolean(fecha && archivoNombre);
   const scheme = useScheme();
+  const theme = useTheme();
   return (
     <ScreenContainer gap={Spacing.four}>
       <View style={styles.header}>
@@ -160,6 +171,7 @@ export function JustificarView({
           value={fecha}
           placeholder="Seleccionar la fecha"
           onPress={onSeleccionarFecha}
+          required
         />
         <SelectorCard
           iconName="document-attach-outline"
@@ -167,6 +179,7 @@ export function JustificarView({
           value={archivoNombre}
           placeholder="Subir archivo"
           onPress={onSeleccionarArchivo}
+          required
         />
         <TipoToggle value={tipo} onChange={onCambiarTipo} />
         <TextField
@@ -176,8 +189,8 @@ export function JustificarView({
           value={observacion}
           onChangeText={onCambiarObservacion}
           multiline
-          textAlignVertical="top"
-          style={{ minHeight: 68, paddingTop: 4 }}
+          textAlignVertical="center"
+          style={{ minHeight: 68 }}
         />
       </View>
 
@@ -190,6 +203,15 @@ export function JustificarView({
           <Ionicons name="alert-circle" size={16} color="#D5453B" />
           <ThemedText type="small" themeColor="danger">
             {error}
+          </ThemedText>
+        </View>
+      ) : null}
+
+      {exito ? (
+        <View style={styles.exito}>
+          <Ionicons name="checkmark-circle" size={16} color={theme.success} />
+          <ThemedText type="small" themeColor="success">
+            {exito}
           </ThemedText>
         </View>
       ) : null}
@@ -225,6 +247,10 @@ const styles = StyleSheet.create({
     flex: 1,
     gap: Spacing.half,
   },
+  selectorLabel: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
   selectorValue: {
     fontWeight: '600',
   },
@@ -248,6 +274,11 @@ const styles = StyleSheet.create({
     transform: [{ scale: 0.99 }],
   },
   error: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.one,
+  },
+  exito: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: Spacing.one,

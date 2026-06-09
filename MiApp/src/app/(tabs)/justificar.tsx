@@ -12,6 +12,7 @@ export default function JustificarScreen() {
     valorFecha,
     enviando,
     error,
+    exito,
     seleccionarFecha,
     onCambiarFecha,
     seleccionarArchivo,
@@ -36,6 +37,7 @@ export default function JustificarScreen() {
       onEnviar={enviar}
       enviando={enviando}
       error={error}
+      exito={exito}
     />
   );
 }

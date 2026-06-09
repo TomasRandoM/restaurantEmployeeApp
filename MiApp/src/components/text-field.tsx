@@ -34,7 +34,6 @@ export function TextField({ label, iconName, style, multiline, ...rest }: TextFi
             backgroundColor: theme.backgroundElement,
             borderColor: focused ? theme.primary : theme.border,
             borderWidth: focused ? 2 : 1,
-            alignItems: multiline ? 'flex-start' : 'center',
           },
         ]}>
         {iconName ? (
@@ -42,7 +41,6 @@ export function TextField({ label, iconName, style, multiline, ...rest }: TextFi
             name={iconName}
             size={20}
             color={focused ? theme.primary : theme.textSecondary}
-            style={multiline ? { paddingTop: 2 } : undefined}
           />
         ) : null}
         <TextInput
