@@ -95,6 +95,7 @@ export function useJustificacion(): UseJustificacionResult {
       setError('Elegí una fecha.');
       return;
     }
+    setExito(null)
     setError(null);
     setEnviando(true);
     try {
@@ -107,8 +108,10 @@ export function useJustificacion(): UseJustificacionResult {
         archivoTipo: archivoTipo ?? undefined,
       });
       setExito("Su justificación fue enviada.")
+      setError(null)
     } catch (e) {
       setError('No se pudo enviar la justificación.');
+      setExito(null)
     } finally {
       setEnviando(false);
     }

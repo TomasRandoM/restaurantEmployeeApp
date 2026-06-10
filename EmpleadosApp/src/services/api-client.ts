@@ -9,6 +9,7 @@
  * vienen los datos (API, almacenamiento, file system...). Ni la view ni
  * el controller deberían saber que existe `fetch`.
  */
+import * as FileSystem from 'expo-file-system/legacy';
 import { authService } from "./auth-service";
 // Lee la URL de la API desde el .env. En Expo SDK 54 las variables expuestas
 // al cliente DEBEN tener el prefijo EXPO_PUBLIC_ y accederse con dot notation
@@ -37,6 +38,24 @@ export class ApiError extends Error {
  * TODO (ustedes): agregar el header Authorization con el token de sesión,
  * timeout, reintentos, etc. según necesiten.
  */
+/**
+ * Descarga un archivo binario desde la API al sistema de archivos del dispositivo.
+ * Centraliza la URL base y el header de auth igual que `apiRequest`.
+ */
+export async function apiDownload(
+  path: string,
+  destino: string,
+): Promise<string> {
+  const uri = `${API_BASE_URL}${path}`;
+  const { uri: archivoLocal, status } = await FileSystem.downloadAsync(uri, destino, {
+    headers: { Authorization: `Bearer ${await authService.obtenerToken()}` },
+  });
+  if (status < 200 || status >= 300) {
+    throw new ApiError(`Error ${status} al descargar ${path}`, status);
+  }
+  return archivoLocal;
+}
+
 export async function apiRequest<T>(
   path: string,
   options?: RequestInit,

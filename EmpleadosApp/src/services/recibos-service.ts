@@ -6,7 +6,9 @@
  */
 
 import type { Recibo } from '@/models/types';
-import { apiRequest } from '@/services/api-client';
+import * as FileSystem from 'expo-file-system/legacy';
+import * as Sharing from 'expo-sharing';
+import { apiDownload, apiRequest } from '@/services/api-client';
 
 type ReciboApi = {
   id: string;
@@ -26,5 +28,14 @@ export const recibosService = {
       mesPago: r.mesPago,
       anioPago: new Date(r.fechaDePago).getFullYear(),
     }));
+  },
+
+  async descargarYCompartir(id: string): Promise<void> {
+    const destino = `${FileSystem.cacheDirectory!}recibo-${id}.pdf`;
+    const archivoLocal = await apiDownload(`/api/v1/reciboDeSueldo/pdf/${id}`, destino);
+    await Sharing.shareAsync(archivoLocal, {
+      mimeType: 'application/pdf',
+      dialogTitle: 'Abrir recibo',
+    });
   },
 };

@@ -7,8 +7,8 @@
 
 import type { Recibo } from '@/models/types';
 import { recibosService } from '@/services/recibos-service';
-import { useRouter } from 'expo-router';
-import { useEffect, useState } from 'react';
+import { useFocusEffect, useRouter } from 'expo-router';
+import { useCallback, useState } from 'react';
 
 export interface UseRecibosResult {
   recibos: Recibo[];
@@ -23,16 +23,18 @@ export function useRecibos(): UseRecibosResult {
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    let activo = true;
-    setCargando(true);
-    recibosService
-      .listar()
-      .then((data) => { if (activo) setRecibos(data); })
-      .catch(() => { if (activo) setError('No se pudieron cargar los recibos.'); })
-      .finally(() => { if (activo) setCargando(false); });
-    return () => { activo = false; };
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      let activo = true;
+      setCargando(true);
+      recibosService
+        .listar()
+        .then((data) => { if (activo) setRecibos(data); })
+        .catch(() => { if (activo) setError('No se pudieron cargar los recibos.'); })
+        .finally(() => { if (activo) setCargando(false); });
+      return () => { activo = false; };
+    }, [])
+  );
 
   function verPdf(recibo: Recibo) {
     router.push({ pathname: '/recibo-pdf' as any, params: { id: recibo.id } });

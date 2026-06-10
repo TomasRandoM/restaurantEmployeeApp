@@ -49,6 +49,10 @@ export const authService = {
     return SecureStore.getItemAsync("EMPLEADO_ID");
   },
 
+  async obtenerEmpleadoName(): Promise<string | null> {
+    return SecureStore.getItemAsync("EMPLEADO_NAME");
+  },
+
   async obtenerSesion(): Promise<Empleado | null> {
     const res = await SecureStore.getItemAsync("EMPLEADO_TOKEN");
     if (res != null) {
