@@ -1,24 +1,21 @@
-import Ionicons from '@expo/vector-icons/Ionicons';
-import { FlatList, StyleSheet, View } from 'react-native';
-
 import { ReciboRow } from '@/components/recibo-row';
 import { ScreenContainer } from '@/components/screen-container';
 import { ThemedText } from '@/components/themed-text';
 import { Radii, Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 import type { Recibo } from '@/models/types';
+import Ionicons from '@expo/vector-icons/Ionicons';
+import { FlatList, StyleSheet, View } from 'react-native';
 
 export type RecibosViewProps = {
   recibos: Recibo[];
-  onDescargar: (recibo: Recibo) => void;
+  onVerPdf: (recibo: Recibo) => void;
   loading?: boolean;
   error?: string | null;
 };
 
-/** Listado de recibos de sueldo por período. */
-export function RecibosView({ recibos, onDescargar, loading, error }: RecibosViewProps) {
+export function RecibosView({ recibos, onVerPdf, loading, error }: RecibosViewProps) {
   const theme = useTheme();
-
   return (
     <ScreenContainer gap={Spacing.three}>
       <View style={styles.header}>
@@ -29,17 +26,15 @@ export function RecibosView({ recibos, onDescargar, loading, error }: RecibosVie
             : 'Tus recibos de sueldo'}
         </ThemedText>
       </View>
-
       {error ? (
         <ThemedText type="small" themeColor="danger">
           {error}
         </ThemedText>
       ) : null}
-
       <FlatList
         data={recibos}
         keyExtractor={(item) => item.id}
-        renderItem={({ item }) => <ReciboRow recibo={item} onDescargar={onDescargar} />}
+        renderItem={({ item }) => <ReciboRow recibo={item} onVerPdf={onVerPdf} />}
         contentContainerStyle={styles.list}
         showsVerticalScrollIndicator={false}
         ListEmptyComponent={
@@ -58,18 +53,9 @@ export function RecibosView({ recibos, onDescargar, loading, error }: RecibosVie
 }
 
 const styles = StyleSheet.create({
-  header: {
-    gap: Spacing.one,
-  },
-  list: {
-    gap: Spacing.three,
-    paddingTop: Spacing.two,
-  },
-  empty: {
-    alignItems: 'center',
-    gap: Spacing.three,
-    paddingTop: Spacing.six,
-  },
+  header: { gap: Spacing.one },
+  list: { gap: Spacing.three, paddingTop: Spacing.two },
+  empty: { alignItems: 'center', gap: Spacing.three, paddingTop: Spacing.six },
   emptyIcon: {
     width: 88,
     height: 88,
@@ -77,7 +63,5 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  emptyText: {
-    textAlign: 'center',
-  },
+  emptyText: { textAlign: 'center' },
 });

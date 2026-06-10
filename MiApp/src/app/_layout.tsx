@@ -22,6 +22,10 @@ export default function RootLayout() {
           name="qr"
           options={{ presentation: 'modal', headerShown: true, title: 'Código QR' }}
         />
+        <Stack.Screen
+          name="recibo-pdf"
+          options={{ headerShown: true, title: 'Recibo de sueldo' }}
+        />
       </Stack>
     </ThemeProvider>
   );

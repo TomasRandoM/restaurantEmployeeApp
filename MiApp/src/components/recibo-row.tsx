@@ -1,35 +1,39 @@
-import { StyleSheet, View } from 'react-native';
-
 import { Card } from '@/components/card';
 import { IconBadge } from '@/components/icon-badge';
 import { IconButton } from '@/components/icon-button';
 import { ThemedText } from '@/components/themed-text';
 import { Spacing } from '@/constants/theme';
 import type { Recibo } from '@/models/types';
+import { StyleSheet, View } from 'react-native';
+
+const MESES = [
+  'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+  'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre',
+];
 
 type ReciboRowProps = {
   recibo: Recibo;
-  onDescargar: (recibo: Recibo) => void;
+  onVerPdf: (recibo: Recibo) => void;
 };
 
-/** Tarjeta de un recibo: ícono + período + botón de descarga. */
-export function ReciboRow({ recibo, onDescargar }: ReciboRowProps) {
+export function ReciboRow({ recibo, onVerPdf }: ReciboRowProps) {
+  const mes = MESES[(recibo.mesPago - 1) % 12];
+  const label = `${mes} ${recibo.anioPago}`;
+
   return (
     <Card style={styles.card}>
       <IconBadge name="document-text-outline" size={48} />
-
       <View style={styles.info}>
         <ThemedText type="default" style={styles.periodo} numberOfLines={1}>
-          {recibo.periodo}
+          {label}
         </ThemedText>
         <ThemedText type="small" themeColor="textSecondary">
           Recibo de sueldo
         </ThemedText>
       </View>
-
       <IconButton
-        accessibilityLabel={`Descargar recibo de ${recibo.periodo}`}
-        onPress={() => onDescargar(recibo)}
+        accessibilityLabel={`Ver recibo de ${label}`}
+        onPress={() => onVerPdf(recibo)}
       />
     </Card>
   );

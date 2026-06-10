@@ -18,16 +18,11 @@ export interface Empleado {
 }
 
 /** Un recibo de sueldo de un mes determinado. */
-export interface Recibo {
+export type Recibo = {
   id: string;
-  /** Mes en texto, p.ej. "JUNIO 2026". */
-  periodo: string;
-  /** Año y mes numéricos, útiles para ordenar. */
-  anio: number;
-  mes: number;
-  /** URL/URI del PDF a descargar (vacío en el template). */
-  archivoUrl?: string;
-}
+  mesPago: number;   // 1–12
+  anioPago: number;  // ej: 2026
+};
 
 /** Tipo de comprobante adjunto a una justificación. */
 export type TipoJustificacion = 'CERTIFICADO' | 'OTRO';

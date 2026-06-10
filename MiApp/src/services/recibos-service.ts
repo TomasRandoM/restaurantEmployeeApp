@@ -5,21 +5,26 @@
  * devuelve el mock para poblar la UI; reemplazar por el fetch real.
  */
 
-import { recibosMock } from '@/models/mock';
 import type { Recibo } from '@/models/types';
+import { apiRequest } from '@/services/api-client';
+
+type ReciboApi = {
+  id: string;
+  mesPago: number;
+  fechaDePago: string; // "2026-03-31T21:00:00.000-03:00"
+};
+
+type RecibosPage = {
+  content: ReciboApi[];
+};
 
 export const recibosService = {
-  /** Trae los recibos del empleado autenticado. */
   async listar(): Promise<Recibo[]> {
-    // TODO: reemplazar el mock por la llamada real:
-    // return apiRequest<Recibo[]>('/recibos');
-    return recibosMock;
-  },
-
-  /** Descarga (y abre/comparte) el PDF de un recibo. */
-  async descargar(recibo: Recibo): Promise<void> {
-    // TODO: descargar el archivo desde `recibo.archivoUrl` con
-    // expo-file-system y abrirlo/compartirlo (expo-sharing / Linking).
-    console.log('TODO: descargar recibo', recibo.id);
+    const page = await apiRequest<RecibosPage>('/api/v1/reciboDeSueldo/mis-recibos');
+    return page.content.map((r) => ({
+      id: r.id,
+      mesPago: r.mesPago,
+      anioPago: new Date(r.fechaDePago).getFullYear(),
+    }));
   },
 };
