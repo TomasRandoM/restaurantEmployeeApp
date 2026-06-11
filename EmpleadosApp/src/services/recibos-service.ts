@@ -1,8 +1,5 @@
 /**
  * Servicio de recibos de sueldo.
- *
- * ⚠️ TEMPLATE: expone la carga y la descarga de recibos. Hoy `listar`
- * devuelve el mock para poblar la UI; reemplazar por el fetch real.
  */
 
 import type { Recibo } from '@/models/types';

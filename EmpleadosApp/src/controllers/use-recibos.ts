@@ -1,8 +1,8 @@
 /**
  * Controller de recibos de sueldo.
  *
- * ⚠️ TEMPLATE: maneja el estado de UI (lista, cargando, error) y delega la
- * obtención/descarga en `recibosService`. El fetch real va en el service.
+ * Maneja el estado de UI (lista, cargando, error) y delega la
+ * obtención/descarga en `recibosService`.
  */
 
 import type { Recibo } from '@/models/types';

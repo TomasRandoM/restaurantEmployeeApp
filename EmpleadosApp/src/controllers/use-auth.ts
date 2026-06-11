@@ -1,9 +1,9 @@
 /**
  * Controller de autenticación (capa "Controlador" del MVC).
  *
- * ⚠️ TEMPLATE: maneja el ESTADO de UI (campos, cargando, error) y orquesta
- * el flujo. El acceso a datos real vive en `authService` (capa Servicios).
- * Acá no debería haber `fetch` ni almacenamiento: solo llamadas al service.
+ * Maneja el ESTADO de UI (campos, cargando, error) y orquesta el flujo.
+ * El acceso a datos vive en `authService` (capa Servicios). Acá no debería
+ * haber `fetch` ni almacenamiento: solo llamadas al service.
  */
 
 import { router } from 'expo-router';

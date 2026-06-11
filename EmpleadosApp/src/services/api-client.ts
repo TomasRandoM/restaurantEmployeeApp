@@ -1,9 +1,8 @@
 /**
  * Cliente HTTP base (capa "Servicios" del MVC + Servicios).
  *
- * ⚠️ TEMPLATE: acá se centraliza TODO lo relacionado a la red para no
- * repetir `fetch` en cada service. Ustedes completan la URL real, los
- * headers de autenticación y el manejo de errores.
+ * Acá se centraliza todo lo relacionado a la red para no repetir `fetch`
+ * en cada service.
  *
  * Idea de la capa de servicios: es el ÚNICO lugar que conoce de dónde
  * vienen los datos (API, almacenamiento, file system...). Ni la view ni
@@ -61,17 +60,21 @@ export async function apiRequest<T>(
   options?: RequestInit,
 ): Promise<T> {
   let res: Response
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 5000);
   try {
     res = await fetch(`${API_BASE_URL}${path}`, {
       ...options,
+      signal: controller.signal,
       headers: {
         Authorization: `Bearer ${await authService.obtenerToken()}`,
         ...options?.headers,
       },
     });
   } catch (e) {
-    console.error('[apiRequest] fetch threw:', e);
     throw new ApiError("No hay conexión a internet", 0);
+  } finally {
+    clearTimeout(timeout);
   }
   if (!res.ok) {
     throw new ApiError(`Error ${res.status} en ${path}`, res.status);

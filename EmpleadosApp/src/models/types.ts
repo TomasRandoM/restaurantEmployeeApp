@@ -36,6 +36,25 @@ export interface Justificacion {
   archivoNombre?: string;
 }
 
+/**
+ * Justificación que no pudo subirse por falta de internet y quedó
+ * guardada en SQLite a la espera de reenvío.
+ */
+export interface JustificacionPendiente {
+  /** Id local autogenerado por SQLite. */
+  id: number;
+  /** Fecha de la inasistencia (dd/MM/yyyy, igual que la envía el controller). */
+  fecha: string;
+  tipoDocumentacion: string;
+  observacion?: string;
+  /** URI persistente del archivo adjunto (copiado fuera del caché). */
+  archivoUri?: string;
+  archivoNombre?: string;
+  archivoTipo?: string;
+  /** Cuándo intentó subirse (ISO), por si después se quiere mostrar o reenviar en orden. */
+  creadaEn: string;
+}
+
 /** Datos para generar el código QR de identificación del empleado. */
 export interface QrData {
   /** Contenido que se codifica en el QR. */

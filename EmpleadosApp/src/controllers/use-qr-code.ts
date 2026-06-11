@@ -1,8 +1,7 @@
 /**
  * Controller para generar el código QR del empleado.
  *
- * ⚠️ TEMPLATE: maneja el estado de UI y delega la generación del valor del
- * QR en `qrService`. La obtención del token real va en el service.
+ * Maneja el estado de UI y delega la generación del valor del QR en `qrService`.
  */
 
 import { useState } from 'react';

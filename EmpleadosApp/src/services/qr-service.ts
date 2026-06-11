@@ -1,8 +1,5 @@
 /**
  * Servicio del código QR de identificación del empleado.
- *
- * ⚠️ TEMPLATE: expone la generación del valor del QR. Obtener el token
- * real (y su expiración) queda como TODO.
  */
 
 import { QRKey, type QrData } from '@/models/types';

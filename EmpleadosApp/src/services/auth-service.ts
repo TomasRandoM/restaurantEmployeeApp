@@ -1,15 +1,15 @@
 /**
  * Servicio de autenticación.
  *
- * ⚠️ TEMPLATE: define QUÉ operaciones existen (login, sesión, logout) con
- * sus firmas async. El CÓMO (API real, guardado seguro de la sesión) queda
- * como TODO. El controller `use-auth` solo llama a estas funciones.
+ * Define las operaciones de login, sesión y logout. El controller `use-auth`
+ * solo llama a estas funciones.
  */
 
 import type { AuthToken, Credenciales, Empleado } from "@/models/types";
 import * as SecureStore from "expo-secure-store";
 import { ApiError, apiRequest } from "./api-client";
 import { qrService } from "./qr-service";
+import { justificacionesService } from "./justificaciones-service";
 
 export const authService = {
   async login(credenciales: Credenciales): Promise<Empleado> {
@@ -29,6 +29,7 @@ export const authService = {
       await SecureStore.setItemAsync("EMPLEADO_ID", empleado.id);
       await SecureStore.setItemAsync("EMPLEADO_EMAIL", credenciales.email);
       await qrService.updateQRKey(empleado.id);
+      justificacionesService.reenviarPendientes();
       return empleado;
     } catch (error) {
       if (error instanceof ApiError) {
@@ -60,6 +61,7 @@ export const authService = {
       if (empleadoId != null) {
         try {
           await qrService.updateQRKey(empleadoId);
+          justificacionesService.reenviarPendientes();
           const name = await SecureStore.getItemAsync("EMPLEADO_NAME");
           const id = await SecureStore.getItemAsync("EMPLEADO_ID");
           if (id !== null && name !== null) {

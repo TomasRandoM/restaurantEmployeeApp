@@ -65,8 +65,8 @@ export function useJustificacion(): UseJustificacionResult {
   }
 
   function onCambiarFecha(event: DateTimePickerEvent, date?: Date) {
-    // En Android el picker es un diálogo modal: se cierra solo. Lo ocultamos
-    // siempre para que el estado refleje que ya no está abierto.
+   // En Android el picker es un diálogo modal: se cierra solo. Lo ocultamos
+    // siempre para que el estado refleje que ya no está abierto. 
     setMostrarPickerFecha(false);
     if (event.type === 'dismissed' || !date) {
       return;
@@ -77,7 +77,6 @@ export function useJustificacion(): UseJustificacionResult {
 
   async function seleccionarArchivo() {
     const resultado = await DocumentPicker.getDocumentAsync({
-      // Comprobantes típicos: imágenes o PDF.
       type: ['image/*', 'application/pdf'],
       copyToCacheDirectory: true,
     });
