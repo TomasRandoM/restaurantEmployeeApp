@@ -55,30 +55,25 @@ export const authService = {
   },
 
   async obtenerSesion(): Promise<Empleado | null> {
-    const res = await SecureStore.getItemAsync("EMPLEADO_TOKEN");
-    if (res != null) {
-      const empleadoId = await SecureStore.getItemAsync("EMPLEADO_ID");
-      if (empleadoId != null) {
-        try {
-          await qrService.updateQRKey(empleadoId);
-          justificacionesService.reenviarPendientes();
-          const name = await SecureStore.getItemAsync("EMPLEADO_NAME");
-          const id = await SecureStore.getItemAsync("EMPLEADO_ID");
-          if (id !== null && name !== null) {
-            const empleado: Empleado = { id, nombre: name };
-            return empleado;
-          }
-        } catch (error) {
-          if (error instanceof ApiError && error.status === 403) {
-            await this.logout();
-            return null;
-          }
-        }
+    const token = await SecureStore.getItemAsync("EMPLEADO_TOKEN");
+    if (token == null) return null;
+
+    const id = await SecureStore.getItemAsync("EMPLEADO_ID");
+    const name = await SecureStore.getItemAsync("EMPLEADO_NAME");
+    if (id == null || name == null) return null;
+
+    try {
+      await qrService.updateQRKey(id);
+      justificacionesService.reenviarPendientes();
+    } catch (error) {
+      if (error instanceof ApiError && error.status === 403) {
+        await this.logout();
+        return null;
       }
-      return null;
-    } else {
-      return null;
+      // Sin internet: continuar con sesión cacheada
     }
+
+    return { id, nombre: name };
   },
 
   /** Cierra la sesión y limpia el almacenamiento. */

@@ -16,11 +16,8 @@ export interface UseAuthResult {
   password: string;
   setEmail: (value: string) => void;
   setPassword: (value: string) => void;
-  /** Indica si hay un login en curso (para deshabilitar el botón, spinner, etc.). */
   cargando: boolean;
-  /** Mensaje de error a mostrar en la UI, si lo hubiera. */
   error: string | null;
-  /** Dispara el login (delega en authService). */
   enviar: () => void;
   checkSession: () => void;
 }
@@ -37,7 +34,8 @@ export function useAuth(): UseAuthResult {
     try {
       const empleado = await authService.login({ email, password });
       router.replace('/home');
-    } catch {
+    } catch (e) {
+      console.warn('Error al iniciar sesión:', e);
       setError('No se pudo iniciar sesión. Revisá tus datos.');
     } finally {
       setCargando(false);
